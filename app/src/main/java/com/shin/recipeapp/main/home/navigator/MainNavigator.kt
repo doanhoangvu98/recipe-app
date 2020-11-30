@@ -14,7 +14,10 @@ class MainNavigator @Inject constructor(private val activity: MainActivity) :
     override fun navigate(event: MainViewModel.NavigationEvent) {
         when (event) {
             is MainViewModel.NavigationEvent.ShowAddRecipe -> {
-                activity.startActivity(AddRecipeActivity.newInstance(activity))
+                activity.startActivity(AddRecipeActivity.newInstance(activity, null))
+            }
+            is MainViewModel.NavigationEvent.ShowRecipeDetail -> {
+                activity.startActivity(AddRecipeActivity.newInstance(activity, event.recipe))
             }
         }
     }

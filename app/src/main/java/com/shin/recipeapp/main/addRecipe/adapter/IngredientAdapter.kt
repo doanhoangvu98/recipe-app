@@ -1,15 +1,19 @@
 package com.shin.recipeapp.main.addRecipe.adapter
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shin.recipeapp.databinding.ItemIngredientInteractBinding
 
-class IngredientAdapter : ListAdapter<String, IngredientAdapter.ViewHolder>(NewEventDiffCallback) {
+class IngredientAdapter() : ListAdapter<String, IngredientAdapter.ViewHolder>(NewEventDiffCallback) {
 
     var onItemDelete: ((String?) -> Unit)? = null
+    var onItemUpdate: ((String?, String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -23,6 +27,18 @@ class IngredientAdapter : ListAdapter<String, IngredientAdapter.ViewHolder>(NewE
             btnDeleteItem.setOnClickListener {
                 onItemDelete?.invoke(holder.binding.ingredient)
             }
+            edtContent.addTextChangedListener (object: TextWatcher {
+                override fun afterTextChanged(p0: Editable?) {
+                }
+
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    onItemUpdate?.invoke(holder.binding.ingredient, p0.toString())
+                }
+
+            })
         }
     }
 

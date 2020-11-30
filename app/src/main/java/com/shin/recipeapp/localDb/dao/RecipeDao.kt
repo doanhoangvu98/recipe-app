@@ -21,5 +21,5 @@ interface RecipeDao {
     fun update(vararg recipe: Recipe): Completable
 
     @Query("SELECT * from recipe ORDER BY id ASC")
-    fun getAll(): Single<List<Recipe>>
+    fun getAll(): Flowable<List<Recipe>>
 }

@@ -14,9 +14,9 @@ data class Recipe(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
     @ColumnInfo(name = "title")
-    var title: String,
+    var title: String?,
     @ColumnInfo(name = "recipeType")
-    var recipeType: String,
+    var recipeType: String?,
     @ColumnInfo(name = "picturePath")
     var picturePath: String? = null,
     @ColumnInfo(name = "steps")
@@ -24,9 +24,11 @@ data class Recipe(
     @ColumnInfo(name = "ingredients")
     var ingredients: ArrayList<String>
 ) : Serializable {
+
     companion object {
         const val ALL_TYPES = "All types"
     }
+
 }
 
 class Converters {

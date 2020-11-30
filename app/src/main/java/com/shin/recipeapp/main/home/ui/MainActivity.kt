@@ -52,7 +52,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun setUpSpinner() {
-        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item, ParserDataSource.readDataXML())
+        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item,
+            ParserDataSource.readDataXML()).apply {
+            setDropDownViewResource(R.layout.spinner_dropdown_item)
+        }
         binding.spnRecipeType.adapter = adapter
         binding.spnRecipeType.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -74,16 +77,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
         val recipeAdapter = RecipeAdapter()
         binding.rvRecipe.adapter = recipeAdapter
         viewModel.recipeListFilter.observe(this, Observer {
-            Timber.d("listrecipe $it")
             recipeAdapter.submitList(it)
         })
         // View detail
         recipeAdapter.onItemSelected = {
             it?.let {
-//                startActivityForResult(
-//                    ViewEditRecipeActivity.newInstance(this, it),
-//                    ViewEditRecipeActivity.DELETE_RECIPE
-//                )
+                viewModel.showRecipeDetail(it)
             }
         }
     }

@@ -22,9 +22,11 @@ class MainViewModel @Inject constructor(
     private var recipeListLiveData = MutableLiveData<List<Recipe>>()
     var recipeListFilter = MutableLiveData<List<Recipe>>()
     private var recipeTypeFilter: String? = null
+    var isLoading = MutableLiveData<Boolean>()
 
     sealed class NavigationEvent {
         object ShowAddRecipe : NavigationEvent()
+        class ShowRecipeDetail(val recipe: Recipe) : NavigationEvent()
     }
 
     private val navigationSubject = PublishSubject.create<NavigationEvent>()
@@ -38,17 +40,22 @@ class MainViewModel @Inject constructor(
         navigationSubject.onNext(NavigationEvent.ShowAddRecipe)
     }
 
+    fun showRecipeDetail(recipe: Recipe) {
+        navigationSubject.onNext(NavigationEvent.ShowRecipeDetail(recipe))
+    }
+
     @SuppressLint("CheckResult")
     fun getAllRecipe() {
+        isLoading.value = true
         recipeRepository.getAll()
             .subscribe({
-                Timber.d("listrecipe $it")
                 recipeListLiveData.value = it
                 if (recipeTypeFilter == null) {
                     recipeTypeFilter = Recipe.ALL_TYPES
                 }
                 filter(recipeTypeFilter!!)
             }, {
+                isLoading.value = false
                 it.printStackTrace()
             })
     }
@@ -62,5 +69,6 @@ class MainViewModel @Inject constructor(
                 it.recipeType == type
             }
         }
+        isLoading.value = false
     }
 }

@@ -7,6 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -15,6 +18,7 @@ import androidx.lifecycle.Observer
 import com.shin.recipeapp.R
 import com.shin.recipeapp.base.BaseBindingActivity
 import com.shin.recipeapp.databinding.ActivityAddRecipeBinding
+import com.shin.recipeapp.localDb.model.Recipe
 import com.shin.recipeapp.main.addRecipe.adapter.IngredientAdapter
 import com.shin.recipeapp.main.addRecipe.adapter.StepAdapter
 import com.shin.recipeapp.main.addRecipe.vm.AddRecipeViewModel
@@ -28,11 +32,14 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
     companion object {
         const val IMAGE_PICK_CODE = 1000
         const val PERMISSION_CODE = 1001
+        const val RECIPE = "recipe"
+
         @JvmStatic
-        fun newInstance(context: Context): Intent {
+        fun newInstance(context: Context, recipe: Recipe?): Intent {
             var intent = Intent(context, AddRecipeActivity::class.java)
-            var args = Bundle()
-            intent.putExtras(args)
+            var bundle = Bundle()
+            bundle.putSerializable(RECIPE, recipe)
+            intent.putExtras(bundle)
             return intent
         }
     }
@@ -41,7 +48,12 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
 
     override val viewModelClass: KClass<AddRecipeViewModel> = AddRecipeViewModel::class
 
+    var recipe: Recipe? = null
+
     override fun init(savedInstanceState: Bundle?) {
+        val bundle = intent.extras
+        recipe = bundle?.getSerializable(RECIPE) as Recipe?
+        viewModel.setDataInit(recipe)
     }
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -52,7 +64,21 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
         // Add success
         viewModel.addSuccess.observe(this, Observer {
             if (it) {
-                Toast.makeText(this, "Add successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.notification_add_successful), Toast.LENGTH_SHORT).show()
+                onBackPressed()
+            }
+        })
+        // Update success
+        viewModel.updateSuccess.observe(this, Observer {
+            if (it) {
+                Toast.makeText(this, getString(R.string.notification_update_successfully), Toast.LENGTH_SHORT).show()
+                onBackPressed()
+            }
+        })
+        // Delete success
+        viewModel.deleteSuccess.observe(this, Observer {
+            if (it) {
+                Toast.makeText(this, getString(R.string.notification_remove_successfully), Toast.LENGTH_SHORT).show()
                 onBackPressed()
             }
         })
@@ -70,8 +96,13 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
     }
 
     private fun setUpSpinner() {
-        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item, ParserDataSource.readDataXML())
+        var recipeTypeList = ParserDataSource.readDataXML()
+        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item,
+            recipeTypeList).apply {
+            setDropDownViewResource(R.layout.spinner_dropdown_item)
+        }
         binding.spnRecipeType.adapter = adapter
+        binding.spnRecipeType.setSelection(recipeTypeList.indexOf(viewModel.recipeType.value))
         binding.spnRecipeType.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -156,6 +187,22 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
                 viewModel.removeStep(it)
             }
         }
+        // Update ingredient item
+        ingredientAdapter.onItemUpdate = { oldData, newData ->
+            if (!newData.isNullOrEmpty()) {
+                viewModel.updateIngredient(oldData, newData)
+            } else {
+                Toast.makeText(this, getString(R.string.validate_enter_ingredient), Toast.LENGTH_SHORT).show()
+            }
+        }
+        // Update step item
+        stepAdapter.onItemUpdate = { oldData, newData ->
+            if (!newData.isNullOrEmpty()) {
+                viewModel.updateStep(oldData, newData)
+            } else {
+                Toast.makeText(this, getString(R.string.validate_enter_step), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun validate(callback: (() -> Unit)? = null) {
@@ -175,10 +222,10 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
             Timber.d("checknull ingredi")
         }
         if (!(viewModel.title.value.isNullOrEmpty() || viewModel.recipeType.value.isNullOrEmpty()
-                    || viewModel.imagePath.value.isNullOrEmpty()
-                    || viewModel.stepListLiveData.value.isNullOrEmpty()
-                    || viewModel.ingredientListLiveData.value.isNullOrEmpty()
-                    )
+                || viewModel.imagePath.value.isNullOrEmpty()
+                || viewModel.stepListLiveData.value.isNullOrEmpty()
+                || viewModel.ingredientListLiveData.value.isNullOrEmpty()
+                )
         ) {
             callback?.invoke()
         }
@@ -222,6 +269,22 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
                 viewModel.imagePath.value = ImageUtil.getPathImg(this, uri)
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        if (recipe != null) inflater.inflate(R.menu.menu_detail, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.delete -> {
+                viewModel.deleteRecipe()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

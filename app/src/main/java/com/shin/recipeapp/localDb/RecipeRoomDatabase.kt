@@ -7,7 +7,7 @@ import com.shin.recipeapp.localDb.dao.RecipeDao
 import com.shin.recipeapp.localDb.model.Converters
 import com.shin.recipeapp.localDb.model.Recipe
 
-@Database(entities = [Recipe::class], version = 1, exportSchema = false)
+@Database(entities = [Recipe::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 
 abstract class RecipeRoomDatabase : RoomDatabase() {
