@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">RecipeApp</string>
+    <string name="titleHome">Recipe App</string>
+    <string name="titleAddRecipe">Add Recipe</string>
+    <string name="title_recipe_detail">Recipe Detail</string>
+    <string name="place_holder_recipe_name">Recipe name</string>
+    <string name="btn_add_image">Add Image</string>
+    <string name="label_title">Title</string>
+    <string name="label_select_recipe_type">Select recipe type</string>
+    <string name="label_ingredients">Ingredients</string>
+    <string name="description_thumbnail">Recipe image</string>
+    <string name="btn_add">Add</string>
+    <string name="label_steps">Steps</string>
+    <string name="place_holder_enter_ingredient">Enter ingredient</string>
+    <string name="place_holder_enter_step">Enter step</string>
 </resources>

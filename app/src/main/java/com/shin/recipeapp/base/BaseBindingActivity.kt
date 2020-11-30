@@ -29,7 +29,7 @@ abstract class BaseBindingActivity<TBinding : ViewDataBinding, TViewModel : Base
         viewModel = ViewModelProviders.of(this, factory)[viewModelClass.java]
         init(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutId)
-//        binding.setVariable(BR.model, viewModel)
+        binding.setVariable(BR.vm, viewModel)
         binding.lifecycleOwner = this
 
         initView(savedInstanceState)
