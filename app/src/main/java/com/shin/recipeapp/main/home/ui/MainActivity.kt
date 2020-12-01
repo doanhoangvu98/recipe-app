@@ -1,8 +1,6 @@
 package com.shin.recipeapp.main.home.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -10,19 +8,11 @@ import androidx.lifecycle.Observer
 import com.shin.recipeapp.R
 import com.shin.recipeapp.base.BaseBindingActivity
 import com.shin.recipeapp.databinding.ActivityMainBinding
-import com.shin.recipeapp.localDb.model.RecipeType
-import com.shin.recipeapp.localDb.model.readRecipeType
-import com.shin.recipeapp.localDb.model.skipParse
+import com.shin.recipeapp.localDb.room.model.Recipe
 import com.shin.recipeapp.main.home.adapter.RecipeAdapter
 import com.shin.recipeapp.main.home.navigator.MainNavigator
 import com.shin.recipeapp.main.home.vm.MainViewModel
 import com.shin.recipeapp.util.ParserDataSource
-import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserException
-import org.xmlpull.v1.XmlPullParserFactory
-import timber.log.Timber
-import java.io.IOException
-import java.io.InputStream
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -52,8 +42,18 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun setUpSpinner() {
-        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item,
-            ParserDataSource.readDataXML()).apply {
+        var recipeList = mutableListOf<String>()
+        // Add all type for default select
+        recipeList.add(Recipe.ALL_TYPES)
+        // Get recipe type from xml
+        var recipeTypeListSource = ParserDataSource.readDataXML()
+        recipeTypeListSource.map {
+            recipeList.add(it)
+        }
+        val adapter = ArrayAdapter<String>(
+            this, R.layout.spinner_item,
+            recipeList
+        ).apply {
             setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
         binding.spnRecipeType.adapter = adapter

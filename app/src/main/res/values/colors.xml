@@ -10,4 +10,5 @@
     <color name="colorItemSpinner">#000000</color>
     <color name="colorEditText">#EFEFEF</color>
     <color name="colorBackgroundSpinner">#EFEFEF</color>
+    <color name="colorError">#CA0303</color>
 </resources>

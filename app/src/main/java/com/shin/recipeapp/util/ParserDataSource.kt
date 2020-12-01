@@ -1,9 +1,9 @@
 package com.shin.recipeapp.util
 
 import com.shin.recipeapp.MyApplication
-import com.shin.recipeapp.localDb.model.RecipeType
-import com.shin.recipeapp.localDb.model.readRecipeType
-import com.shin.recipeapp.localDb.model.skipParse
+import com.shin.recipeapp.localDb.room.model.RecipeType
+import com.shin.recipeapp.localDb.room.model.readRecipeType
+import com.shin.recipeapp.localDb.room.model.skipParse
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory

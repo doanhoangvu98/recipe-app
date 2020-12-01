@@ -13,9 +13,10 @@
     <string name="label_steps">Steps</string>
     <string name="place_holder_enter_ingredient">Enter ingredient</string>
     <string name="place_holder_enter_step">Enter step</string>
-    <string name="notification_add_successful">Add successfully</string>
-    <string name="notification_update_successfully">Update successfully</string>
-    <string name="notification_remove_successfully">Remove successfully</string>
+    <string name="notification_add_successful">Added successfully</string>
+    <string name="notification_update_successfully">Updated successfully</string>
+    <string name="notification_remove_successfully">Removed successfully</string>
     <string name="validate_enter_step">Enter step to continue</string>
     <string name="validate_enter_ingredient">Enter ingredient to continue</string>
+    <string name="validate_enter_title">Enter recipe title</string>
 </resources>

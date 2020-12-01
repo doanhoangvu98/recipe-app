@@ -1,4 +1,4 @@
-package com.shin.recipeapp.localDb.model
+package com.shin.recipeapp.localDb.room.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -27,6 +27,9 @@ data class Recipe(
 
     companion object {
         const val ALL_TYPES = "All types"
+        const val SOUP = "Soup"
+        const val DESSERT = "Dessert"
+        const val BREAKFAST = "Breakfast"
     }
 
 }

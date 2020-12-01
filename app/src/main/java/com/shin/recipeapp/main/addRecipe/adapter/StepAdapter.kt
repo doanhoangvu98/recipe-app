@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shin.recipeapp.databinding.ItemStepInteractBinding
 
-class StepAdapter : ListAdapter<String, StepAdapter.ViewHolder>(NewEventDiffCallback) {
+class StepAdapter : ListAdapter<String, StepAdapter.ViewHolder>(StepDiffCallback) {
 
     var onItemDelete: ((String?) -> Unit)? = null
     var onItemUpdate: ((String?, String?) -> Unit)? = null
+    var onItemSelected: ((String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -26,7 +27,10 @@ class StepAdapter : ListAdapter<String, StepAdapter.ViewHolder>(NewEventDiffCall
             btnDeleteItem.setOnClickListener {
                 onItemDelete?.invoke(holder.binding.step)
             }
-            edtContent.addTextChangedListener (object: TextWatcher {
+            btnEditItem.setOnClickListener {
+                onItemSelected?.invoke(holder.binding.step)
+            }
+            edtStep.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(p0: Editable?) {
                 }
 
@@ -34,7 +38,11 @@ class StepAdapter : ListAdapter<String, StepAdapter.ViewHolder>(NewEventDiffCall
                 }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    onItemUpdate?.invoke(holder.binding.step, p0.toString())
+                    if (!p0.isNullOrEmpty()) {
+                        onItemUpdate?.invoke(holder.binding.step, p0.toString())
+                        holder.binding.step = p0.toString()
+                        edtStep.setSelection(p0.length)
+                    }
                 }
 
             })
@@ -47,7 +55,7 @@ class StepAdapter : ListAdapter<String, StepAdapter.ViewHolder>(NewEventDiffCall
 
     class ViewHolder(val binding: ItemStepInteractBinding) : RecyclerView.ViewHolder(binding.root)
 
-    object NewEventDiffCallback : DiffUtil.ItemCallback<String>() {
+    object StepDiffCallback : DiffUtil.ItemCallback<String>() {
         override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
             return oldItem == newItem
         }

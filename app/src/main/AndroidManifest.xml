@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:requestLegacyExternalStorage="true">
         <activity android:name=".main.addRecipe.ui.AddRecipeActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboard|orientation|screenSize"/>
         <activity android:name=".main.home.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

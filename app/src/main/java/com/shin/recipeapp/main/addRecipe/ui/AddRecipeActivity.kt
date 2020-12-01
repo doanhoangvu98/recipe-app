@@ -5,12 +5,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
+import android.text.InputFilter
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -18,11 +21,12 @@ import androidx.lifecycle.Observer
 import com.shin.recipeapp.R
 import com.shin.recipeapp.base.BaseBindingActivity
 import com.shin.recipeapp.databinding.ActivityAddRecipeBinding
-import com.shin.recipeapp.localDb.model.Recipe
+import com.shin.recipeapp.localDb.room.model.Recipe
 import com.shin.recipeapp.main.addRecipe.adapter.IngredientAdapter
 import com.shin.recipeapp.main.addRecipe.adapter.StepAdapter
 import com.shin.recipeapp.main.addRecipe.vm.AddRecipeViewModel
 import com.shin.recipeapp.util.ImageUtil
+import com.shin.recipeapp.util.InputFilterSpace
 import com.shin.recipeapp.util.ParserDataSource
 import timber.log.Timber
 import kotlin.reflect.KClass
@@ -36,8 +40,8 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
 
         @JvmStatic
         fun newInstance(context: Context, recipe: Recipe?): Intent {
-            var intent = Intent(context, AddRecipeActivity::class.java)
-            var bundle = Bundle()
+            val intent = Intent(context, AddRecipeActivity::class.java)
+            val bundle = Bundle()
             bundle.putSerializable(RECIPE, recipe)
             intent.putExtras(bundle)
             return intent
@@ -50,6 +54,9 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
 
     var recipe: Recipe? = null
 
+    private lateinit var ingredientDialog: EditIngredientDialog
+    private lateinit var stepDialog: EditStepDialog
+
     override fun init(savedInstanceState: Bundle?) {
         val bundle = intent.extras
         recipe = bundle?.getSerializable(RECIPE) as Recipe?
@@ -61,24 +68,37 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
         setUpButton()
         setUpSpinner()
         setUpRecyclerView()
+        setUpEditText()
         // Add success
         viewModel.addSuccess.observe(this, Observer {
             if (it) {
-                Toast.makeText(this, getString(R.string.notification_add_successful), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.notification_add_successful),
+                    Toast.LENGTH_SHORT
+                ).show()
                 onBackPressed()
             }
         })
         // Update success
         viewModel.updateSuccess.observe(this, Observer {
             if (it) {
-                Toast.makeText(this, getString(R.string.notification_update_successfully), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.notification_update_successfully),
+                    Toast.LENGTH_SHORT
+                ).show()
                 onBackPressed()
             }
         })
         // Delete success
         viewModel.deleteSuccess.observe(this, Observer {
             if (it) {
-                Toast.makeText(this, getString(R.string.notification_remove_successfully), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.notification_remove_successfully),
+                    Toast.LENGTH_SHORT
+                ).show()
                 onBackPressed()
             }
         })
@@ -95,10 +115,17 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
         return super.onSupportNavigateUp()
     }
 
+    private fun setUpEditText() {
+        binding.edtIngredient.filters = arrayOf<InputFilter>(InputFilterSpace())
+        binding.edtStep.filters = arrayOf<InputFilter>(InputFilterSpace())
+    }
+
     private fun setUpSpinner() {
-        var recipeTypeList = ParserDataSource.readDataXML()
-        val adapter = ArrayAdapter<String>(this, R.layout.spinner_item,
-            recipeTypeList).apply {
+        val recipeTypeList = ParserDataSource.readDataXML()
+        val adapter = ArrayAdapter(
+            this, R.layout.spinner_item,
+            recipeTypeList
+        ).apply {
             setDropDownViewResource(R.layout.spinner_dropdown_item)
         }
         binding.spnRecipeType.adapter = adapter
@@ -125,7 +152,8 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
             if (!viewModel.step.value.isNullOrEmpty()) {
                 viewModel.addStep()
             } else {
-                Toast.makeText(this, "Enter step", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.validate_enter_step), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
         // Add ingredient
@@ -133,12 +161,12 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
             if (!viewModel.ingredient.value.isNullOrEmpty()) {
                 viewModel.addIngredient()
             } else {
-                Toast.makeText(this, "Enter ingredient", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.validate_enter_ingredient),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }
-        // Add recipe
-        binding.btnAddRecipe.setOnClickListener {
-            validate { viewModel.addRecipe() }
         }
         // Add image
         binding.btnAddImage.setOnClickListener {
@@ -167,12 +195,14 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
         val stepAdapter = StepAdapter()
         binding.rvSteps.adapter = stepAdapter
         viewModel.stepListLiveData.observe(this, Observer {
+            Timber.d("LIST STEP: $it")
             stepAdapter.submitList(it)
         })
         // Ingredient recyclerview
         val ingredientAdapter = IngredientAdapter()
         binding.rvIngredients.adapter = ingredientAdapter
         viewModel.ingredientListLiveData.observe(this, Observer {
+            Timber.d("LIST INGREDIENT: $it")
             ingredientAdapter.submitList(it)
         })
         // Delete ingredient item
@@ -187,47 +217,16 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
                 viewModel.removeStep(it)
             }
         }
-        // Update ingredient item
-        ingredientAdapter.onItemUpdate = { oldData, newData ->
-            if (!newData.isNullOrEmpty()) {
-                viewModel.updateIngredient(oldData, newData)
-            } else {
-                Toast.makeText(this, getString(R.string.validate_enter_ingredient), Toast.LENGTH_SHORT).show()
+        // On item selected
+        ingredientAdapter.onItemSelected = {
+            it?.let {
+                showEditIngredientDialog(it)
             }
         }
-        // Update step item
-        stepAdapter.onItemUpdate = { oldData, newData ->
-            if (!newData.isNullOrEmpty()) {
-                viewModel.updateStep(oldData, newData)
-            } else {
-                Toast.makeText(this, getString(R.string.validate_enter_step), Toast.LENGTH_SHORT).show()
+        stepAdapter.onItemSelected = {
+            it?.let {
+                showEditStepDialog(it)
             }
-        }
-    }
-
-    private fun validate(callback: (() -> Unit)? = null) {
-        if (viewModel.title.value.isNullOrEmpty()) {
-            Timber.d("checknull title")
-        }
-        if (viewModel.recipeType.value.isNullOrEmpty()) {
-            Timber.d("checknull type")
-        }
-        if (viewModel.imagePath.value.isNullOrEmpty()) {
-            Timber.d("checknull path")
-        }
-        if (viewModel.stepListLiveData.value.isNullOrEmpty()) {
-            Timber.d("checknull step")
-        }
-        if (viewModel.ingredientListLiveData.value.isNullOrEmpty()) {
-            Timber.d("checknull ingredi")
-        }
-        if (!(viewModel.title.value.isNullOrEmpty() || viewModel.recipeType.value.isNullOrEmpty()
-                || viewModel.imagePath.value.isNullOrEmpty()
-                || viewModel.stepListLiveData.value.isNullOrEmpty()
-                || viewModel.ingredientListLiveData.value.isNullOrEmpty()
-                )
-        ) {
-            callback?.invoke()
         }
     }
 
@@ -285,6 +284,47 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showEditIngredientDialog(text: String) {
+        ingredientDialog = EditIngredientDialog(this, text, viewModel)
+        ingredientDialog.show()
+        ingredientDialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        ingredientDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        ingredientDialog.onSubmit = {
+            if (it.trim().isNullOrEmpty()) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.validate_enter_ingredient),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                viewModel.updateIngredient(text, it)
+                ingredientDialog.dismiss()
+            }
+        }
+    }
+
+    private fun showEditStepDialog(text: String) {
+        stepDialog = EditStepDialog(this, text, viewModel)
+        stepDialog.show()
+        stepDialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        stepDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        stepDialog.onSubmit = {
+            if (it.trim().isNullOrEmpty()) {
+                Toast.makeText(this, getString(R.string.validate_enter_step), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                viewModel.updateStep(text, it)
+                stepDialog.dismiss()
+            }
+        }
     }
 
 }

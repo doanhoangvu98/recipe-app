@@ -88,7 +88,7 @@
                     android:background="@android:color/transparent"
                     app:layout_constraintEnd_toEndOf="@+id/edt_recipe_name"
                     app:layout_constraintStart_toStartOf="@+id/edt_recipe_name"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_select_recipe_type" />
 
                 <Button
                     android:id="@+id/btn_add_image"
@@ -115,7 +115,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/edt_recipe_name"
                     app:layout_constraintStart_toStartOf="@+id/edt_recipe_name"
                     app:layout_constraintTop_toBottomOf="@+id/btn_add_image"
-                    path="@{vm.recipe != null ? vm.imagePath : ``}"
+                    path="@{vm.imagePath}"
                     tools:srcCompat="@tools:sample/avatars"
                     android:contentDescription="@string/description_thumbnail" />
 
@@ -146,7 +146,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/tv_select_recipe_type"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -156,7 +156,7 @@
                     android:textSize="@dimen/itemTextSize"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edt_recipe_name" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title_error" />
 
                 <ImageView
                     android:id="@+id/btn_add_ingredient"
@@ -223,13 +223,13 @@
                     android:id="@+id/btn_add_step"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName2"
+                    app:layout_constraintBottom_toBottomOf="@+id/edt_step"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName2"
+                    app:layout_constraintTop_toTopOf="@+id/edt_step"
                     app:srcCompat="@drawable/ic_add_circle" />
 
                 <EditText
-                    android:id="@+id/editTextTextPersonName2"
+                    android:id="@+id/edt_step"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -277,8 +277,50 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_step"
                     android:onClick="@{() -> vm.recipe == null ?  vm.addRecipe() : vm.updateRecipe()}"/>
+
+                <TextView
+                    android:id="@+id/tv_title_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_recipe_name"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/rv_ingredient_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_ingredient"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/rv_step_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_step"
+                    android:visibility="gone"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

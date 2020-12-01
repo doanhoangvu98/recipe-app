@@ -6,7 +6,7 @@
     <data>
         <variable
             name="recipe"
-            type="com.shin.recipeapp.localDb.model.Recipe" />
+            type="com.shin.recipeapp.localDb.room.model.Recipe" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

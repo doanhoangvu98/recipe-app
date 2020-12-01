@@ -2,10 +2,12 @@ package com.shin.recipeapp.main.addRecipe.vm
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.shin.recipeapp.R
 import com.shin.recipeapp.base.BaseViewModel
-import com.shin.recipeapp.localDb.model.Recipe
-import com.shin.recipeapp.localDb.repository.RecipeRepository
+import com.shin.recipeapp.localDb.room.model.Recipe
+import com.shin.recipeapp.localDb.room.repository.RecipeRepository
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -14,10 +16,14 @@ class AddRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) : BaseViewModel() {
     var step = MutableLiveData<String>()
+    var ingredient = MutableLiveData<String>()
+
+    var stepEdit = MutableLiveData<String>()
+    var ingredientEdit = MutableLiveData<String>()
+
     private var stepList = mutableListOf<String>()
     var stepListLiveData = MutableLiveData<List<String>>()
 
-    var ingredient = MutableLiveData<String>()
     private var ingredientList = mutableListOf<String>()
     var ingredientListLiveData = MutableLiveData<List<String>>()
 
@@ -29,7 +35,7 @@ class AddRecipeViewModel @Inject constructor(
     var updateSuccess = MutableLiveData<Boolean>()
     var deleteSuccess = MutableLiveData<Boolean>()
 
-    var recipeLiveData = MutableLiveData<Recipe>()
+    private var recipeLiveData = MutableLiveData<Recipe>()
     var recipe: Recipe? = null
 
     fun setDataInit(recipe: Recipe?) {
@@ -46,6 +52,8 @@ class AddRecipeViewModel @Inject constructor(
 
             ingredientList = recipe.ingredients
             ingredientListLiveData.value = recipe.ingredients
+        } else {
+            imagePath.value = ""
         }
     }
 
@@ -76,52 +84,89 @@ class AddRecipeViewModel @Inject constructor(
     }
 
     fun updateStep(oldData: String?, newData: String?) {
-        var index = stepList.indexOf(oldData)
-        if (newData != null) {
-            stepList[index] = newData
+        val index = stepList.indexOf(oldData)
+        if (!newData?.trim().isNullOrEmpty()) {
+            stepList[index] = newData?.trim().toString()
             stepListLiveData.value = stepList
         }
+        stepEdit.value = null
     }
 
     fun updateIngredient(oldData: String?, newData: String?) {
-        Timber.d("updateingredient $ingredientList - $oldData - $newData")
-        var index = ingredientList.indexOf(oldData)
-        if (newData != null) {
-            ingredientList[index] = newData
+        Timber.d("UPDATE INGREDIENT ITEM $oldData - $newData")
+        val index = ingredientList.indexOf(oldData)
+        if (!newData?.trim().isNullOrEmpty()) {
+            ingredientList[index] = newData?.trim().toString()
             ingredientListLiveData.value = ingredientList
+        }
+        ingredientEdit.value = null
+    }
+
+    private fun validate(callback: (() -> Unit)? = null) {
+        if (title.value?.trim().isNullOrEmpty()) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.validate_enter_title),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if (stepListLiveData.value.isNullOrEmpty()) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.validate_enter_step),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if (ingredientListLiveData.value.isNullOrEmpty()) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.validate_enter_ingredient),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if (!(title.value.isNullOrEmpty()
+                    || stepListLiveData.value.isNullOrEmpty()
+                    || ingredientListLiveData.value.isNullOrEmpty()
+                    )
+        ) {
+            callback?.invoke()
         }
     }
 
     @SuppressLint("CheckResult")
     fun addRecipe() {
-        val recipe = Recipe(
-            null,
-            title.value!!,
-            recipeType.value!!,
-            imagePath.value!!,
-            stepListLiveData.value!! as ArrayList<String>,
-            ingredientListLiveData.value!! as ArrayList<String>
-        )
-        recipeRepository.insert(recipe).subscribe({
-            addSuccess.value = true
-        }, {
-        })
+        validate {
+            val recipe = Recipe(
+                null,
+                title.value!!.trim(),
+                recipeType.value!!,
+                imagePath.value!!,
+                stepListLiveData.value!! as ArrayList<String>,
+                ingredientListLiveData.value!! as ArrayList<String>
+            )
+            recipeRepository.insert(recipe).subscribe({
+                addSuccess.value = true
+            }, {
+            })
+        }
     }
 
     @SuppressLint("CheckResult")
     fun updateRecipe() {
-        var recipe = Recipe(
-            recipeLiveData.value?.id,
-            title.value!!,
-            recipeType.value!!,
-            imagePath.value!!,
-            stepListLiveData.value!! as ArrayList<String>,
-            ingredientListLiveData.value!! as ArrayList<String>
-        )
-        recipeRepository.update(recipe).subscribe({
-            updateSuccess.value = true
-        }, {
-        })
+        validate {
+            val recipe = Recipe(
+                recipeLiveData.value?.id,
+                title.value!!.trim(),
+                recipeType.value!!,
+                imagePath.value!!,
+                stepListLiveData.value!! as ArrayList<String>,
+                ingredientListLiveData.value!! as ArrayList<String>
+            )
+            recipeRepository.update(recipe).subscribe({
+                updateSuccess.value = true
+            }, {
+            })
+        }
     }
 
     fun deleteRecipe() {

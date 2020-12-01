@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shin.recipeapp.databinding.ItemRecipeBinding
-import com.shin.recipeapp.localDb.model.Recipe
+import com.shin.recipeapp.localDb.room.model.Recipe
 
 class RecipeAdapter : ListAdapter<Recipe, RecipeAdapter.ViewHolder>(NewEventDiffCallback) {
 

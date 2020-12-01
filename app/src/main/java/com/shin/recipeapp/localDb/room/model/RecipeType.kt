@@ -1,4 +1,4 @@
-package com.shin.recipeapp.localDb.model
+package com.shin.recipeapp.localDb.room.model
 
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException

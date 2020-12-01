@@ -4,16 +4,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shin.recipeapp.databinding.ItemIngredientInteractBinding
 
-class IngredientAdapter() : ListAdapter<String, IngredientAdapter.ViewHolder>(NewEventDiffCallback) {
+class IngredientAdapter :
+    ListAdapter<String, IngredientAdapter.ViewHolder>(IngredientDiffCallback) {
 
     var onItemDelete: ((String?) -> Unit)? = null
     var onItemUpdate: ((String?, String?) -> Unit)? = null
+    var onItemSelected: ((String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -27,7 +28,10 @@ class IngredientAdapter() : ListAdapter<String, IngredientAdapter.ViewHolder>(Ne
             btnDeleteItem.setOnClickListener {
                 onItemDelete?.invoke(holder.binding.ingredient)
             }
-            edtContent.addTextChangedListener (object: TextWatcher {
+            btnEditItem.setOnClickListener {
+                onItemSelected?.invoke(holder.binding.ingredient)
+            }
+            edtIngredient.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(p0: Editable?) {
                 }
 
@@ -35,9 +39,10 @@ class IngredientAdapter() : ListAdapter<String, IngredientAdapter.ViewHolder>(Ne
                 }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    onItemUpdate?.invoke(holder.binding.ingredient, p0.toString())
+                    if (!p0.isNullOrEmpty()) {
+                        onItemUpdate?.invoke(holder.binding.ingredient, p0.toString())
+                    }
                 }
-
             })
         }
     }
@@ -49,7 +54,7 @@ class IngredientAdapter() : ListAdapter<String, IngredientAdapter.ViewHolder>(Ne
     class ViewHolder(val binding: ItemIngredientInteractBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    object NewEventDiffCallback : DiffUtil.ItemCallback<String>() {
+    object IngredientDiffCallback : DiffUtil.ItemCallback<String>() {
         override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
             return oldItem == newItem
         }

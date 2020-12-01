@@ -29,12 +29,19 @@ object ImageUtil {
             RequestOptions().fitCenter()
         }
         type.placeholder(R.drawable.recipe_place_holder)
-        val file = File(path)
-        val imageUri: Uri = Uri.fromFile(file)
+        if (!path.isNullOrEmpty()) {
+            val file = File(path)
+            val imageUri: Uri = Uri.fromFile(file)
 
-        path?.let {
+            path?.let {
+                Glide.with(imageView.context)
+                    .load(imageUri)
+                    .apply(type)
+                    .into(imageView)
+            }
+        } else {
             Glide.with(imageView.context)
-                .load(imageUri)
+                .load("")
                 .apply(type)
                 .into(imageView)
         }

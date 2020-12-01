@@ -1,9 +1,9 @@
-package com.shin.recipeapp.localDb.di
+package com.shin.recipeapp.localDb.room.di
 
 import android.content.Context
 import androidx.room.Room
 import com.shin.recipeapp.localDb.RecipeRoomDatabase
-import com.shin.recipeapp.localDb.dao.RecipeDao
+import com.shin.recipeapp.localDb.room.dao.RecipeDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

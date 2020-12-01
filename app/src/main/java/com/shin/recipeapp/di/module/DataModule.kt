@@ -1,7 +1,7 @@
 package com.shin.recipeapp.di.module
 
-import com.shin.recipeapp.localDb.repository.RecipeRepository
-import com.shin.recipeapp.localDb.repository.RecipeRepositoryImpl
+import com.shin.recipeapp.localDb.room.repository.RecipeRepository
+import com.shin.recipeapp.localDb.room.repository.RecipeRepositoryImpl
 import dagger.Binds
 import dagger.Module
 

@@ -1,14 +1,13 @@
-package com.shin.recipeapp.localDb.repository
+package com.shin.recipeapp.localDb.room.repository
 
-import androidx.lifecycle.LiveData
-import com.shin.recipeapp.localDb.model.Recipe
+import com.shin.recipeapp.localDb.room.model.Recipe
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Single
 
 interface RecipeRepository {
     fun getAll(): Flowable<List<Recipe>>
     fun insert(recipe: Recipe): Completable
+    fun insertAll(list: List<Recipe>): Completable
     fun update(recipe: Recipe): Completable
     fun delete(id: Int): Completable
 }
