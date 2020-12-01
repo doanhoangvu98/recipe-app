@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<recipeTypes>
+    <recipeType>
+        <type>Soup</type>
+    </recipeType>
+    <recipeType>
+        <type>Dessert</type>
+    </recipeType>
+    <recipeType>
+        <type>Breakfast</type>
+    </recipeType>
+    <recipeType>
+        <type>Dinner</type>
+    </recipeType>
+    <recipeType>
+        <type>Drink</type>
+    </recipeType>
+    <recipeType>
+        <type>Salad</type>
+    </recipeType>
+    <recipeType>
+        <type>Snack</type>
+    </recipeType>
+</recipeTypes>

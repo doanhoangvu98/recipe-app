@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.shin.recipeapp.main.addRecipe.vm.AddRecipeViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        tools:context=".main.addRecipe.ui.AddRecipeActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/ToolbarTheme">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@{vm.recipe == null ? @string/titleAddRecipe : vm.recipe.title}"
+                    android:textColor="@color/colorTitleToolbar"
+                    android:textSize="@dimen/titleTextSize"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    tools:text="Title"/>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:fillViewport="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_marginTop="?attr/actionBarSize">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edt_recipe_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_edit_text"
+                    android:ems="10"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:hint="@string/place_holder_recipe_name"
+                    android:inputType="textPersonName"
+                    android:padding="16dp"
+                    android:text="@={vm.title}"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    android:autofillHints="Recipe name" />
+
+                <Spinner
+                    android:id="@+id/spn_recipe_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintEnd_toEndOf="@+id/edt_recipe_name"
+                    app:layout_constraintStart_toStartOf="@+id/edt_recipe_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_select_recipe_type" />
+
+                <Button
+                    android:id="@+id/btn_add_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/round_corner"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/btn_add_image"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorLabel"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toEndOf="@+id/edt_recipe_name"
+                    app:layout_constraintStart_toStartOf="@+id/edt_recipe_name"
+                    app:layout_constraintTop_toBottomOf="@+id/spn_recipe_type" />
+
+                <ImageView
+                    android:id="@+id/img_recipe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="@+id/edt_recipe_name"
+                    app:layout_constraintStart_toStartOf="@+id/edt_recipe_name"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_add_image"
+                    path="@{vm.imagePath}"
+                    tools:srcCompat="@tools:sample/avatars"
+                    android:contentDescription="@string/description_thumbnail" />
+
+                <TextView
+                    android:id="@+id/tv_ingredients"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/label_ingredients"
+                    android:textColor="@color/colorLabel"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_add_ingredient"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/img_recipe" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/label_title"
+                    android:textColor="@color/colorLabel"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_select_recipe_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/label_select_recipe_type"
+                    android:textColor="@color/colorLabel"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title_error" />
+
+                <ImageView
+                    android:id="@+id/btn_add_ingredient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/edt_ingredient"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/edt_ingredient"
+                    app:srcCompat="@drawable/ic_add_circle" />
+
+                <EditText
+                    android:id="@+id/edt_ingredient"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_edit_text"
+                    android:ems="10"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:hint="@string/place_holder_enter_ingredient"
+                    android:inputType="textPersonName"
+                    android:padding="16dp"
+                    android:text="@={vm.ingredient}"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_add_ingredient"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_ingredients" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_ingredients"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_ingredients"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_ingredient_interact" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    app:srcCompat="@drawable/ic_add_circle" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/label_steps"
+                    android:textColor="@color/colorLabel"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_add_step"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_ingredient" />
+
+                <ImageView
+                    android:id="@+id/btn_add_step"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/edt_step"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/edt_step"
+                    app:srcCompat="@drawable/ic_add_circle" />
+
+                <EditText
+                    android:id="@+id/edt_step"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_edit_text"
+                    android:ems="10"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:hint="@string/place_holder_enter_step"
+                    android:inputType="textPersonName"
+                    android:maxLines="2"
+                    android:minLines="2"
+                    android:padding="16dp"
+                    android:text="@={vm.step}"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_add_step"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_steps"
+                    android:autofillHints="" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_steps"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4"
+                    tools:listitem="@layout/item_step_interact"
+                    tools:itemCount="2"/>
+
+                <Button
+                    android:id="@+id/btn_add_recipe"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_button"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@{vm.recipe == null ? @string/btn_add : `Update`}"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/itemTextSize"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_step"
+                    android:onClick="@{() -> vm.recipe == null ?  vm.addRecipe() : vm.updateRecipe()}"/>
+
+                <TextView
+                    android:id="@+id/tv_title_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_recipe_name"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/rv_ingredient_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_ingredient"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/rv_step_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/errorTextSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_step"
+                    android:visibility="gone"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
