@@ -59,16 +59,32 @@ class AddRecipeViewModel @Inject constructor(
 
     fun addStep() {
         step.value?.let {
-            stepList.add(it)
-            stepListLiveData.value = stepList
+            if (it.trim().isNullOrEmpty()) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.validate_enter_step),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                stepList.add(it.trim())
+                stepListLiveData.value = stepList
+            }
         }
         step.value = null
     }
 
     fun addIngredient() {
         ingredient.value?.let {
-            ingredientList.add(it)
-            ingredientListLiveData.value = ingredientList
+            if (it.trim().isNullOrEmpty()) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.validate_enter_ingredient),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                ingredientList.add(it.trim())
+                ingredientListLiveData.value = ingredientList
+            }
         }
         ingredient.value = null
     }

@@ -68,7 +68,6 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
         setUpButton()
         setUpSpinner()
         setUpRecyclerView()
-        setUpEditText()
         // Add success
         viewModel.addSuccess.observe(this, Observer {
             if (it) {
@@ -113,11 +112,6 @@ class AddRecipeActivity : BaseBindingActivity<ActivityAddRecipeBinding, AddRecip
     override fun onSupportNavigateUp(): Boolean {
         super.onBackPressed()
         return super.onSupportNavigateUp()
-    }
-
-    private fun setUpEditText() {
-        binding.edtIngredient.filters = arrayOf<InputFilter>(InputFilterSpace())
-        binding.edtStep.filters = arrayOf<InputFilter>(InputFilterSpace())
     }
 
     private fun setUpSpinner() {
